@@ -27,6 +27,6 @@ public class App {
 
     public static void main(String[] args) {
         var app = getApp();
-        app.start(DEFAULT_PORT);
+        app.start(PORT);
     }
 }
