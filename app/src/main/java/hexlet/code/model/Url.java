@@ -1,4 +1,4 @@
-package hexlet.code;
+package hexlet.code.model;
 
 import lombok.Getter;
 import lombok.Setter;
