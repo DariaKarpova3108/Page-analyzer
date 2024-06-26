@@ -27,7 +27,6 @@ lint:
 update-deps:
 	make -C app update-deps
 
-
 build-run: build run
 
 .PHONY: build
