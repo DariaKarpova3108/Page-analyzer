@@ -18,7 +18,7 @@ public class App {
 
     public static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
-        return Integer.parseInt(port);
+        return Integer.valueOf(port);
     }
 
     public static String getUrl() {
