@@ -16,6 +16,8 @@ public class App {
 // postgresql://page_analyzer_db_oxdu_user:4wyudCOvKC1lp37X9F676oSjYKzAZjid@dpg-cpt9e4qju9rs73ant040-a/page_analyzer_db_oxdu
 // postgresql://page_analyzer_db_oxdu_user:4wyudCOvKC1lp37X9F676oSjYKzAZjid@dpg-cpt9e4qju9rs73ant040-a.oregon-postgres.render.com/page_analyzer_db_oxdu
 
+    //остался вопрос по поводу создания БД в PostgreSQL как локальную?
+
     public static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.valueOf(port);
