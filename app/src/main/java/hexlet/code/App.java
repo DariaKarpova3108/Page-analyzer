@@ -13,15 +13,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class App {
-// hostname  dpg-cpt9e4qju9rs73ant040-a
-// port      5432
-// database  page_analyzer_db_oxdu
-// username  page_analyzer_db_oxdu_user
-// password  4wyudCOvKC1lp37X9F676oSjYKzAZjid
-// postgresql://page_analyzer_db_oxdu_user:4wyudCOvKC1lp37X9F676oSjYKzAZjid@dpg-cpt9e4qju9rs73ant040-a/page_analyzer_db_oxdu
-// postgresql://page_analyzer_db_oxdu_user:4wyudCOvKC1lp37X9F676oSjYKzAZjid@dpg-cpt9e4qju9rs73ant040-a.oregon-postgres.render.com/page_analyzer_db_oxdu
-
-    //остался вопрос по поводу создания БД в PostgreSQL как локальную?
 
     public static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
@@ -69,5 +60,6 @@ public class App {
     public static void main(String[] args) throws SQLException, IOException {
         var app = getApp();
         app.start(getPort());
+        //app.start(7070);
     }
 }

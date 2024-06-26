@@ -1,3 +1,6 @@
+@import gg.jte.Content
+@param Content content
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,28 +9,32 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Анализатор страниц</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
-<header>
+<header class="p-3 mb-2 bg-dark text-white">
     <div>
-        <nav>
-            <a href="/">Анализатор страниц</a>
-            <a href="/">Главная</a>
-            <a href="">Сайты</a>
+        <nav class="d-flex flex-row mb-3">
+            <a href="/" class="text-white bg-dark link-underline-dark">Анализатор страниц</a>
+            <a href="/" class="text-white-50 bg-dark  link-underline-dark">Главная</a>
+            <a href="" class="text-white-50 bg-dark  link-underline-dark">Сайты</a>
         </nav>
     </div>
-</header>
-<main>
     <div>
         <h1>Анализатор страниц</h1>
-        <h3>Бесплатно проверяйте сайты на SEO пригодность</h3>
+        <p>Бесплатно проверяйте сайты на SEO пригодность</p>
     </div>
-    <p>Пример: https://www.example.com</p>
+    <p class="text-secondary">Пример: https://www.example.com</p>
+</header>
+<main>
+    ${content}
 </main>
-<footer>
-    <p>created by Hexlet</p>
+<footer class="border-top bg-light ">
+    <p class="fixed-bottom text-center">created by <a href="https://ru.hexlet.io">Hexlet</a></p>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 </html>
