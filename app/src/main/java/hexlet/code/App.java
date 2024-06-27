@@ -52,14 +52,20 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get("/", ctx -> ctx.render("mainPage.jte"));
+       app.get("/", ctx -> ctx.render("index.jte"));
+    //app.get("/", ctx -> ctx.result("page.jte"));
 
 
         return app;
     }
 
     public static void main(String[] args) throws SQLException, IOException {
-        var app = getApp();
-        app.start(getPort());
+        try {
+            var app = getApp();
+          //app.start(getPort());
+            app.start(8080);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

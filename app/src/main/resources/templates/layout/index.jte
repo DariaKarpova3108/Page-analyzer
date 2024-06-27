@@ -1,4 +1,7 @@
+<%--
 @import gg.jte.Content
+@import hexlet.code.dto.BasePage
+
 @param Content content
 
 <!doctype html>
@@ -15,7 +18,7 @@
 <body>
 <header class="p-3 mb-2 bg-dark text-white">
     <div>
-        <nav class="d-flex flex-row mb-3">
+        <nav>
             <a href="/" class="text-white bg-dark link-underline-dark">Анализатор страниц</a>
             <a href="/" class="text-white-50 bg-dark  link-underline-dark">Главная</a>
             <a href="" class="text-white-50 bg-dark  link-underline-dark">Сайты</a>
@@ -24,7 +27,9 @@
 </header>
 
 <main>
-    ${content}
+    <section>
+        ${content}
+    </section>
 </main>
 
 <footer class="border-top bg-light ">
@@ -35,4 +40,4 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 </body>
-</html>
+</html>--%>
