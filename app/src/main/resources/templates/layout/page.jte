@@ -26,21 +26,21 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav">
-                    <a class="nav-link" href="${NamedRoutes.rootPath()}" >Главная</a>
-                    <a class="nav-link" href="">Сайты</a>
-                </div>
-            </div>
         </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav">
+                <a class="nav-link" href="${NamedRoutes.rootPath()}">Главная</a>
+                <a class="nav-link" href="">Сайты</a>
+            </div>
+        </div>
     </div>
 </nav>
 
-<main  class="flex-grow-1">
+<main class="flex-grow-1">
     @if(page!=null && page.getFlash()!=null)
-    <div class="rounded-0 m-0 alert alert-dismissible fade show alert-" role="alert">
-        <p>${page.getFlash()}</p>
-    </div>
+        <div class="rounded-0 m-0 alert alert-dismissible fade show alert-" role="alert">
+            <p>${page.getFlash()}</p>
+        </div>
     @endif
     <section>
         ${content}
