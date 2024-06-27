@@ -54,12 +54,12 @@ public class App {
 
         app.get("/", ctx -> ctx.render("mainPage.jte"));
 
+
         return app;
     }
 
     public static void main(String[] args) throws SQLException, IOException {
         var app = getApp();
         app.start(getPort());
-        //app.start(7070);
     }
 }

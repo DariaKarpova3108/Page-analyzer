@@ -21,18 +21,16 @@
             <a href="" class="text-white-50 bg-dark  link-underline-dark">Сайты</a>
         </nav>
     </div>
-    <div>
-        <h1>Анализатор страниц</h1>
-        <p>Бесплатно проверяйте сайты на SEO пригодность</p>
-    </div>
-    <p class="text-secondary">Пример: https://www.example.com</p>
 </header>
+
 <main>
     ${content}
 </main>
+
 <footer class="border-top bg-light ">
     <p class="fixed-bottom text-center">created by <a href="https://ru.hexlet.io">Hexlet</a></p>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
