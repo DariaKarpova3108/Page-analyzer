@@ -6,6 +6,7 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.controllers.RootController;
+import hexlet.code.controllers.UrlsController;
 import hexlet.code.repository.BaseRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
@@ -17,8 +18,9 @@ import java.sql.SQLException;
 public class App {
 
     public static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "7070");
-        return Integer.valueOf(port);
+       // String port = System.getenv().getOrDefault("PORT", "7070");
+        String port = System.getenv().get("PORT");
+        return Integer.parseInt(port);
     }
 
     public static String getUrl() {
@@ -55,7 +57,11 @@ public class App {
         });
 
         app.get(NamedRoutes.rootPath(), RootController::index);
-       // app.post(NamedRoutes.urlsPath(), );
+        app.post(NamedRoutes.urlsPath(),UrlsController::create);
+        app.get(NamedRoutes.urlsPath(), UrlsController::showAllUrls);
+        app.get(NamedRoutes.urlsPathWithChecks(), UrlsController::showAllUrlsWithChecks);
+        app.get(NamedRoutes.urlPath("{id}"), UrlsController::showUrl);
+        app.get(NamedRoutes.urlCheckPath("{id}"), UrlsController::checkUrl);
         return app;
     }
 

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class UrlRepository extends BaseRepository {
     public static void saveToDataBase(Url url) throws SQLException {
-        String sql = "INSERT (name, created_at) VALUES(?, ?)";
+        String sql = "INSERT INTO urls (name, created_at) VALUES(?, ?)";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, url.getName());
@@ -57,9 +57,9 @@ public class UrlRepository extends BaseRepository {
              PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setLong(1, id);
             ResultSet resultSet = pst.executeQuery();
-            while (resultSet.next()) {
-                var name = resultSet.getString("name");
-                var date = resultSet.getTimestamp("created_at");
+            if (resultSet.next()) {
+                String name = resultSet.getString("name");
+                Timestamp date = resultSet.getTimestamp("created_at");
                 Url url = new Url(name, date);
                 url.setId(id);
                 return Optional.of(url);
@@ -75,9 +75,9 @@ public class UrlRepository extends BaseRepository {
              Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                var id = resultSet.getLong("id");
-                var name = resultSet.getString("name");
-                var created_at = resultSet.getTimestamp("created_at");
+                long id = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                Timestamp created_at = resultSet.getTimestamp("created_at");
                 Url url = new Url(name, created_at);
                 url.setId(id);
                 urls.add(url);

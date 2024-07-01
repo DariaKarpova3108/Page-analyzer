@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.net.URL;
 import java.sql.Timestamp;
 
 @Getter
