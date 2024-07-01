@@ -62,12 +62,7 @@ public class App {
     }
 
     public static void main(String[] args) throws SQLException, IOException {
-        try {
             var app = getApp();
             app.start(getPort());
-            // app.start(8080);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

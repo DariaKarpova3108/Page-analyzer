@@ -22,7 +22,7 @@ public class NamedRoutes {
     }
 
     public static String urlCheckPath(Long id) {
-        return urlPath(String.valueOf(id));
+        return urlCheckPath((String.valueOf(id)));
     }
 
     public static String urlCheckPath(String id) {

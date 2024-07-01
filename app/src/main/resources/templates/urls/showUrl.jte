@@ -1,4 +1,5 @@
 @import hexlet.code.dto.UrlPage
+@import hexlet.code.util.NamedRoutes
 @param UrlPage page
 
 @template.layout.page(
@@ -42,7 +43,7 @@ content = @`
                 <tbody>
                 <tr>
                     @if(page.getChecks()!=null)
-                        <td>${page.getChecks().getId()}</td>
+                        <td>${NamedRoutes.urlCheckPath(page.getChecks().getId())}</td>
                         <td>${page.getChecks().getStatus()}</td>
                         <td>${page.getChecks().getTitle()}</td>
                         <td>${page.getChecks().getH1()}</td>
