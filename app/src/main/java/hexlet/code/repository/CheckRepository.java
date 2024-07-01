@@ -11,7 +11,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Timestamp;
 
-public class CheckRepository extends BaseRepository{
+public class CheckRepository extends BaseRepository {
+
+    //дописать сюда методы для добавления в таблицу
     public static Checks checkUrl(Url urlModel) throws IOException {
         Document document = Jsoup.connect(urlModel.getName()).get();
         Elements titleElement = document.select("head > title");
