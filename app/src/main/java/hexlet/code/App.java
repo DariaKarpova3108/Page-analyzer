@@ -18,16 +18,12 @@ import java.sql.SQLException;
 public class App {
 
     public static int getPort() {
-       // String port = System.getenv().getOrDefault("PORT", "7070");
-        String port = System.getenv().get("PORT");
+       String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.parseInt(port);
     }
 
     public static String getUrl() {
-        String url = System.getenv("JDBC_DATABASE_URL");
-        if (url == null || url.isEmpty()) {
-            url = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1";
-        }
+        String url = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
         return url;
     }
 
