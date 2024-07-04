@@ -69,7 +69,25 @@ public class UrlRepository extends BaseRepository {
         return Optional.empty();
     }
 
-    public static List<Url> getURLs() throws SQLException {
+    public static Optional<Url> findByName(String urlName) throws SQLException {
+        String sql = "SELECT * FROM urls WHERE name = ?";
+        try (var conn = dataSource.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, urlName);
+            ResultSet resultSet = pst.executeQuery();
+            if (resultSet.next()) {
+                long id = resultSet.getLong("id");
+                String name = resultSet.getString("name");
+                Timestamp date = resultSet.getTimestamp("created_at");
+                Url url = new Url(name, date);
+                url.setId(id);
+                return Optional.of(url);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public static List<Url> getEntities() throws SQLException {
         String sql = "SELECT * FROM urls ORDER BY id";
         List<Url> urls = new ArrayList<>();
         try (var conn = dataSource.getConnection();

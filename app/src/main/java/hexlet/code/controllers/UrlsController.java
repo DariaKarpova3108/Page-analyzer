@@ -23,7 +23,7 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
         try {
             var uri = ctx.formParamAsClass("url", URI.class).get();
             UrlRepository.save(uri);
-            var page = UrlRepository.getURLs();
+            var page = UrlRepository.getEntities();
             ctx.render("urls/showAllUrls", model("page", page)).status(200);
         } catch (SQLException e) {
             ctx.result(e.getMessage()).status(400);
@@ -32,7 +32,7 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
 
     public static void showAllUrls(Context ctx) throws SQLException {
         try {
-            List<Url> urls = UrlRepository.getURLs();
+            List<Url> urls = UrlRepository.getEntities();
             if (!urls.isEmpty()) {
                 UrlsPage page = new UrlsPage(urls, null);
                 ctx.render("urls/showAllUrls", model("page", page)).status(200);
@@ -60,10 +60,11 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
 
     public static void showAllUrlsWithChecks(Context ctx) throws SQLException {
         try {
-            List<Url> urls = UrlRepository.getURLs();
+            List<Url> urls = UrlRepository.getEntities();
             Map<Url, Checks> checks = new LinkedHashMap<>();
             for (var url : urls) {
-                Checks check = CheckRepository.saveCheckedUrl(url);
+                CheckRepository.saveCheckedUrl(url);
+                var check = CheckRepository.getLastCheck(url.getId()).orElse(null);
                 checks.put(url, check);
             }
             if (!urls.isEmpty()) {
@@ -84,7 +85,8 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
             long id = ctx.pathParamAsClass("id", Long.class).get();
             Url url = UrlRepository.find(id)
                     .orElseThrow(() -> new NotFoundResponse("URL not found"));
-            Checks check = CheckRepository.saveCheckedUrl(url);
+            CheckRepository.saveCheckedUrl(url);
+            var check = CheckRepository.getLastCheck(id).orElse(null);
             var page = new UrlPage(url, check);
             ctx.render("urls/showUrl.jte", model("page", page)).status(200);
         } catch (NotFoundResponse e) {
