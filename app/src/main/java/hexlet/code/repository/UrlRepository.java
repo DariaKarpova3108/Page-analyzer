@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+//добавить методы поиска по имени 
 public class UrlRepository extends BaseRepository {
     public static void saveToDataBase(Url url) throws SQLException {
         String sql = "INSERT INTO urls (name, created_at) VALUES(?, ?)";
@@ -69,7 +70,7 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static List<Url> getURLs() throws SQLException {
-        String sql = "SELECT * FROM urls";
+        String sql = "SELECT * FROM urls ORDER BY id";
         List<Url> urls = new ArrayList<>();
         try (var conn = dataSource.getConnection();
              Statement statement = conn.createStatement()) {

@@ -63,7 +63,7 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
             List<Url> urls = UrlRepository.getURLs();
             Map<Url, Checks> checks = new LinkedHashMap<>();
             for (var url : urls) {
-                Checks check = CheckRepository.checkUrl(url);
+                Checks check = CheckRepository.saveCheckedUrl(url);
                 checks.put(url, check);
             }
             if (!urls.isEmpty()) {
@@ -84,7 +84,7 @@ public class UrlsController { //добавить вывод ФЛЕШ сообщ�
             long id = ctx.pathParamAsClass("id", Long.class).get();
             Url url = UrlRepository.find(id)
                     .orElseThrow(() -> new NotFoundResponse("URL not found"));
-            Checks check = CheckRepository.checkUrl(url);
+            Checks check = CheckRepository.saveCheckedUrl(url);
             var page = new UrlPage(url, check);
             ctx.render("urls/showUrl.jte", model("page", page)).status(200);
         } catch (NotFoundResponse e) {

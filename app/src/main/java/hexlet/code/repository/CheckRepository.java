@@ -8,19 +8,21 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.sql.Timestamp;
 
 public class CheckRepository extends BaseRepository {
 
     //дописать сюда методы для добавления в таблицу
-    public static Checks checkUrl(Url urlModel) throws IOException {
+    public static Checks saveCheckedUrl(Url urlModel) throws IOException {
         Document document = Jsoup.connect(urlModel.getName()).get();
         Elements titleElement = document.select("head > title");
         Elements h1Element = document.select("h1");
         Elements descriptionMeta = document.select("meta[name=description]");
 
-        URL url = new URL(urlModel.getName());
+        URI uri = URI.create(urlModel.getName());
+        URL url = uri.toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         int statusCode = conn.getResponseCode();

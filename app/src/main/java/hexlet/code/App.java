@@ -17,7 +17,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -53,11 +55,20 @@ public class App {
         BaseRepository.dataSource = dataSource;
 
         var sql = readResources("schema.sql");
-
         log.info(sql);
+
+        try(Connection conn = dataSource.getConnection();
+            Statement statement = conn.createStatement()) {
+            statement.execute(sql);
+        }
+
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
+        });
+
+        app.before(ctx -> {
+            ctx.contentType("text/html; charset=utf-8");
         });
 
         app.get(NamedRoutes.rootPath(), RootController::index);
