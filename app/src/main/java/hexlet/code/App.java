@@ -57,9 +57,16 @@ public class App {
         var sql = readResources("schema.sql");
         log.info(sql);
 
-        try(Connection conn = dataSource.getConnection();
-            Statement statement = conn.createStatement()) {
-            statement.execute(sql);
+        try (Connection conn = dataSource.getConnection();
+             Statement statement = conn.createStatement()) {
+            if (conn != null) {
+                statement.execute(sql);
+                System.out.println("Connected to the database!");
+            } else {
+                System.out.println("Failed to make connection!");
+            }
+        } catch (SQLException e) {
+            e.getMessage();
         }
 
         var app = Javalin.create(config -> {
@@ -70,12 +77,11 @@ public class App {
         app.before(ctx -> {
             ctx.contentType("text/html; charset=utf-8");
         });
-
         app.get(NamedRoutes.rootPath(), RootController::index);
-        app.post(NamedRoutes.urlsPath(), UrlsController::create);
-        app.get(NamedRoutes.urlsPath(), UrlsController::showAllUrls);
-        app.get(NamedRoutes.urlsPathWithChecks(), UrlsController::showAllUrlsWithChecks);
+        app.post(NamedRoutes.listUrlsPath(), UrlsController::create);
+        app.get(NamedRoutes.listUrlsPath(), UrlsController::showListUrls);
         app.get(NamedRoutes.urlPath("{id}"), UrlsController::showUrl);
+        app.post(NamedRoutes.urlCheckPath("{id}"), UrlsController::saveCheckUrl);
         app.get(NamedRoutes.urlCheckPath("{id}"), UrlsController::checkUrl);
         return app;
     }

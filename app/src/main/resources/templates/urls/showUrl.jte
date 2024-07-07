@@ -5,9 +5,16 @@
 @template.layout.page(
 page=page,
 content = @`
-    <div>
+    <%--добавить влеш сообщение--%>
+    <%--<div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
+                    <p class="m-0">Страница успешно проверена</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>--%>
+
+    <div class="container-lg mt-5">
         <h1>Сайт: ${page.getUrl().getName()}</h1>
-        <table>
+        <table class="table table-bordered table-hover mt-3">
+            <tbody>
             <tr>
                 <td>id</td>
                 <td>${page.getUrl().getId()}</td>
@@ -20,24 +27,27 @@ content = @`
                 <td>Дата создания</td>
                 <td>${page.getUrl().getCreated_at().toString()}</td>
             </tr>
+            </tbody>
         </table>
     </div>
 
     <div>
-        <h1>Проверки</h1>
+        <h2 class="mt-5">Проверки</h2>
         <div>
-            <button>Запустить проверку</button>
+            <form method="post" name="check" action="${NamedRoutes.urlCheckPath(page.getUrl().getId())}">
+                <button type="submit" class="btn btn-primary">Запустить проверку</button>
+            </form>
         </div>
         <div>
-            <table>
+            <table class="table table-bordered table-hover mt-3">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Код ответа</th>
+                    <th class="col-1">ID</th>
+                    <th class="col-1">Код ответа</th>
                     <th>title</th>
                     <th>h1</th>
                     <th>description</th>
-                    <th>Дата проверки</th>
+                    <th class="col-2">Дата проверки</th>
                 </tr>
                 </thead>
                 <tbody>

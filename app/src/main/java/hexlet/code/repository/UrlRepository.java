@@ -1,11 +1,8 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.Url;
-import org.apache.commons.lang3.StringUtils;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,44 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//добавить методы поиска по имени 
 public class UrlRepository extends BaseRepository {
-    public static void saveToDataBase(Url url) throws SQLException {
-        String sql = "INSERT INTO urls (name, created_at) VALUES(?, ?)";
-        try (var conn = dataSource.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+    public static void save(Url url) throws SQLException {
+        String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pst.setString(1, url.getName());
             pst.setTimestamp(2, url.getCreated_at());
             pst.executeUpdate();
-            var generatedKeys = pst.getGeneratedKeys();
+            ResultSet generatedKeys = pst.getGeneratedKeys();
             if (generatedKeys.next()) {
                 url.setId(generatedKeys.getLong(1));
             } else {
-                throw new SQLException("DB have not returned an id after saving an entity");
+                throw new SQLException("DB don't have return an id after saving entity");
             }
         }
     }
 
-    public static void save(URI uri) throws SQLException {
-        try {
-            URL url = uri.toURL();
-            if (StringUtils.isNotBlank(url.getProtocol()) && StringUtils.isNotBlank(url.getHost())) {
-                Timestamp currentDate = new Timestamp(System.currentTimeMillis());
-                String adressCurrent = url.getProtocol() + "://" + url.getHost();
-                if (url.getPort() != -1) {
-                    adressCurrent = adressCurrent + ":" + url.getPort();
-                }
-                Url model = new Url(adressCurrent, currentDate);
-                saveToDataBase(model);
-            } else {
-                System.out.println("Invalid URL: missing protocol or host");
-            }
-        } catch (MalformedURLException e) {
-            System.out.println("URI to URL conversion error: " + e.getMessage());
-        }
-    }
-
-    public static Optional<Url> find(Long id) throws SQLException {
+    public static Optional<Url> find(long id) throws SQLException {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {

@@ -5,12 +5,8 @@ public class NamedRoutes {
         return "/";
     }
 
-    public static String urlsPath() {
+    public static String listUrlsPath() {
         return "/urls";
-    }
-
-    public static String urlsPathWithChecks() {
-        return "/urls/check" ;
     }
 
     public static String urlPath(Long id) {
