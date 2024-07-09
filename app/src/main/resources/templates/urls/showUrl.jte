@@ -5,11 +5,17 @@
 @template.layout.page(
 page=page,
 content = @`
-    <%--добавить влеш сообщение--%>
-    <%--<div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
-                    <p class="m-0">Страница успешно проверена</p>
+<%--откорректировать ФОРМАТ ВРЕМЕНИ--%>
+
+    <%--
+    <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
+                    <p class="m-0">Некорректный URL</p>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>--%>
+                </div>
+    --%>
+
+<%--реализовать логику проверок так, чтобы показывались на странице конкретного сайта все проверки,
+даже если они идут подряд--%>
 
     <div class="container-lg mt-5">
         <h1>Сайт: ${page.getUrl().getName()}</h1>
@@ -39,7 +45,7 @@ content = @`
             </form>
         </div>
         <div>
-            <table class="table table-bordered table-hover mt-3">
+            <table class="table table-bordered table-hover mt-3"> <%--понять как сузить страницу--%>
                 <thead>
                 <tr>
                     <th class="col-1">ID</th>

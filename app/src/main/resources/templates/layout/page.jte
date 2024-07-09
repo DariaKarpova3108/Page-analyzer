@@ -37,11 +37,28 @@
 </nav>
 
 <main class="flex-grow-1">
+
     @if(page!=null && page.getFlash()!=null)
-        <div class="rounded-0 m-0 alert alert-dismissible fade show alert-" role="alert">
-            <p>${page.getFlash()}</p>
-        </div>
+        @if(page.getFlash().equals("wrong"))
+            <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
+                ${page.getFlashType()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+        @elseif(page.getFlash().equals("success"))
+            <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
+                ${page.getFlashType()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @elseif(page.getFlash().equals("unchanged"))
+            <div class="rounded-0 m-0 alert alert-dismissible fade show alert-info" role="alert">
+                ${page.getFlashType()}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
     @endif
+
+
     <section>
         ${content}
     </section>

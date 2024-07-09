@@ -1,5 +1,7 @@
 package hexlet.code.controllers;
 
+import hexlet.code.dto.BasePage;
+import hexlet.code.dto.MainPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsPage;
 import hexlet.code.model.Checks;
@@ -30,9 +32,13 @@ public class UrlsController {
                 url = uri.toURL();
             }
         } catch (MalformedURLException e) {
-            ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.sessionAttribute("flash-type", "wrong");
-            ctx.redirect(NamedRoutes.rootPath());
+            ctx.sessionAttribute("flash-type", "Некорректный URL");
+            ctx.sessionAttribute("flash", "wrong");
+            var page = new MainPage();
+            page.setFlash(ctx.consumeSessionAttribute("flash"));
+            page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
+            ctx.render("index.jte", model("page",page));
+           // ctx.redirect(NamedRoutes.rootPath());
             return;
         }
 
@@ -43,12 +49,12 @@ public class UrlsController {
 
         if (UrlRepository.findByName(urlString).isEmpty()) {
             UrlRepository.save(urlModel);
-            ctx.sessionAttribute("flash", "Страница успешно добавлена");
-            ctx.sessionAttribute("flash-type", "success");
+            ctx.sessionAttribute("flash", "success");
+            ctx.sessionAttribute("flash-type", "Страница успешно добавлена");
             ctx.redirect(NamedRoutes.listUrlsPath());
-        } else {
-            ctx.sessionAttribute("flash", "Страница уже существует");
-            ctx.sessionAttribute("flash-type", "unchanged");
+        } else if (UrlRepository.findByName(urlString).isPresent()) {
+            ctx.sessionAttribute("flash", "unchanged");
+            ctx.sessionAttribute("flash-type", "Страница уже существует");
             ctx.redirect(NamedRoutes.listUrlsPath());
         }
     }
@@ -58,7 +64,7 @@ public class UrlsController {
         var check = CheckRepository.getListLastCheck(); //проверить на корректность
         var page = new UrlsPage(listUrls, check);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
-        page.setFlash(ctx.consumeSessionAttribute("flash-type"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/showListUrls.jte", model("page", page));
     }
 
@@ -81,12 +87,15 @@ public class UrlsController {
         ctx.redirect(NamedRoutes.urlCheckPath(id));
     }
 
+
+    //добавить вывод флеш-сообщений
     public static void checkUrl(Context ctx) throws SQLException, IOException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
         var lastCheck = CheckRepository.getLastCheck(id).orElse(null);
         var page = new UrlPage(url, lastCheck);
+
         ctx.render("urls/showUrl.jte", model("page", page));
     }
 }

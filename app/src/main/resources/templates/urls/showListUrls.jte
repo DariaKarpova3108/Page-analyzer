@@ -2,17 +2,12 @@
 @import hexlet.code.util.NamedRoutes
 @param UrlsPage page
 
+<%--откорректировать ФОРМАТ ВРЕМЕНИ--%>
 <%--нужно добавить лист проверок, иначе в результате добавляется только последняя проверка последнего проверенного сайта--%>
 
 @template.layout.page(
 page=page,
 content = @`
-<%--Флеш сообщение стилистика ниже--%>
- <%--   <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
-        <p class="m-0">Страница успешно добавлена</p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>--%>
-
     <div class="container-lg mt-5">
         <h1>Сайты</h1>
         <table class="table table-bordered table-hover mt-3">
