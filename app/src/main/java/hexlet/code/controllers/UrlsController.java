@@ -1,6 +1,5 @@
 package hexlet.code.controllers;
 
-import hexlet.code.dto.BasePage;
 import hexlet.code.dto.MainPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsPage;
@@ -37,8 +36,8 @@ public class UrlsController {
             var page = new MainPage();
             page.setFlash(ctx.consumeSessionAttribute("flash"));
             page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
-            ctx.render("index.jte", model("page",page));
-           // ctx.redirect(NamedRoutes.rootPath());
+            ctx.render("index.jte", model("page", page));
+            // ctx.redirect(NamedRoutes.rootPath());
             return;
         }
 
