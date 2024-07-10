@@ -28,7 +28,7 @@ content = @`
                         @for(var urlCheck : page.getChecks().entrySet())
                             @if(urlCheck.getKey().getId()==url.getId())
                                 <td>${urlCheck.getKey().getCreated_at().toString()}</td>
-                                <td>${urlCheck.getValue().getStatus()}</td>
+                                <td>${urlCheck.getValue().getStatusCode()}</td>
                             @endif
                         @endfor
                     </tr>

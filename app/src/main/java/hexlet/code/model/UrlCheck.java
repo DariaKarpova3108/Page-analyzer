@@ -10,20 +10,20 @@ import java.sql.Timestamp;
 @Setter
 @ToString
 
-public class Checks {
+public class UrlCheck {
     private long id;
-    private long url_id;
-    private int status;
+    private long urlId;
+    private int statusCode;
     private String title;
     private String h1;
     private String description;
-    private Timestamp created_at;
+    private Timestamp createdAt;
 
-    public Checks(int status, String title, String h1, String description, Timestamp created_at) {
-        this.status = status;
+    public UrlCheck(int statusCode, String title, String h1, String description, Timestamp createdAt) {
+        this.statusCode = statusCode;
         this.title = title;
         this.h1 = h1;
         this.description = description;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 }

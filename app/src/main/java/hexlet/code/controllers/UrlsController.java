@@ -3,7 +3,7 @@ package hexlet.code.controllers;
 import hexlet.code.dto.MainPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsPage;
-import hexlet.code.model.Checks;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.model.Url;
 import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
@@ -80,12 +80,11 @@ public class UrlsController {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
-        Checks checks = CheckRepository.parsingURL(url.getName());
-        checks.setUrl_id(url.getId());
+        UrlCheck checks = CheckRepository.parsingURL(url.getName());
+        checks.setUrlId(url.getId());
         CheckRepository.saveCheckedUrl(checks);
         ctx.redirect(NamedRoutes.urlCheckPath(id));
     }
-
 
     //добавить вывод флеш-сообщений
     public static void checkUrl(Context ctx) throws SQLException, IOException {
@@ -94,7 +93,6 @@ public class UrlsController {
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
         var lastCheck = CheckRepository.getLastCheck(id).orElse(null);
         var page = new UrlPage(url, lastCheck);
-
         ctx.render("urls/showUrl.jte", model("page", page));
     }
 }

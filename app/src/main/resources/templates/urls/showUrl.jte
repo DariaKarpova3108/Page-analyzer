@@ -60,11 +60,11 @@ content = @`
                 <tr>
                     @if(page.getChecks()!=null)
                         <td>${NamedRoutes.urlCheckPath(page.getChecks().getId())}</td>
-                        <td>${page.getChecks().getStatus()}</td>
+                        <td>${page.getChecks().getStatusCode()}</td>
                         <td>${page.getChecks().getTitle()}</td>
                         <td>${page.getChecks().getH1()}</td>
                         <td>${page.getChecks().getDescription()}</td>
-                        <td>${page.getChecks().getCreated_at().toString()}</td>
+                        <td>${page.getChecks().getCreatedAt().toString()}</td>
                     @endif
                 </tr>
                 </tbody>

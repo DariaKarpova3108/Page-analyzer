@@ -1,6 +1,6 @@
 package hexlet.code.repository;
 
-import hexlet.code.model.Checks;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.model.Url;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,22 +10,28 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class CheckRepository extends BaseRepository {
-    public static void saveCheckedUrl(Checks urlCheck) throws SQLException, IOException {
-        String sql = "INSERT INTO checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+
+    //добавить метод показать проверки
+    public static void saveCheckedUrl(UrlCheck urlCheck) throws SQLException, IOException {
+        String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pst.setInt(1, urlCheck.getStatus());
+            pst.setInt(1, urlCheck.getStatusCode());
             pst.setString(2, urlCheck.getTitle());
             pst.setString(3, urlCheck.getH1());
             pst.setString(4, urlCheck.getDescription());
-            pst.setLong(5, urlCheck.getUrl_id());
-            pst.setTimestamp(6, urlCheck.getCreated_at());
+            pst.setLong(5, urlCheck.getUrlId());
+            pst.setTimestamp(6, urlCheck.getCreatedAt());
             pst.executeUpdate();
             ResultSet generatedKeys = pst.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -36,9 +42,8 @@ public class CheckRepository extends BaseRepository {
         }
     }
 
-    //добавить метод показать проверки
-    public static Optional<Checks> getLastCheck(long id) throws SQLException {
-        String sql = "SELECT * FROM checks WHERE id = ? " +
+    public static Optional<UrlCheck> getLastCheck(long id) throws SQLException {
+        String sql = "SELECT * FROM url_checks WHERE id = ? " +
                 "ORDER BY created_at DESC LIMIT 1";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -51,19 +56,19 @@ public class CheckRepository extends BaseRepository {
                 var h1 = resultSet.getString("h1");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
-                var urlCheck = new Checks(status, title, h1, description, createdAt);
-                urlCheck.setUrl_id(urlId);
+                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
+                urlCheck.setUrlId(urlId);
                 return Optional.of(urlCheck);
             }
         }
         return Optional.empty();
     }
 
-    public static Map<Url, Checks> getListLastCheck() throws SQLException {
-        String sql = "SELECT * FROM checks " +
-                "INNER JOIN urls ON checks.url_id = urls.id" +
-                " ORDER BY checks.created_at DESC LIMIT 1";
-        Map<Url, Checks> listChecks = new LinkedHashMap<>();
+    public static Map<Url, UrlCheck> getListLastCheck() throws SQLException {
+        String sql = "SELECT * FROM url_checks " +
+                "INNER JOIN urls ON url_checks.url_id = urls.id" +
+                " ORDER BY url_checks.created_at DESC LIMIT 1";
+        Map<Url, UrlCheck> listChecks = new LinkedHashMap<>();
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             ResultSet resultSet = pst.executeQuery();
@@ -74,15 +79,15 @@ public class CheckRepository extends BaseRepository {
                 var urlModel = new Url(name, date);
                 urlModel.setId(id);
 
-                var idCheck = resultSet.getLong("checks.id");
-                var urlId = resultSet.getLong("checks.url_id");
-                var status = resultSet.getInt("checks.status_code");
-                var title = resultSet.getString("checks.title");
-                var h1 = resultSet.getString("checks.h1");
-                var description = resultSet.getString("checks.description");
-                var createdAt = resultSet.getTimestamp("checks.created_at");
-                var urlCheck = new Checks(status, title, h1, description, createdAt);
-                urlCheck.setUrl_id(urlId);
+                var idCheck = resultSet.getLong("url_checks.id");
+                var urlId = resultSet.getLong("url_checks.url_id");
+                var status = resultSet.getInt("url_checks.status_code");
+                var title = resultSet.getString("url_checks.title");
+                var h1 = resultSet.getString("url_checks.h1");
+                var description = resultSet.getString("url_checks.description");
+                var createdAt = resultSet.getTimestamp("url_checks.created_at");
+                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
+                urlCheck.setUrlId(urlId);
                 urlCheck.setId(idCheck);
                 listChecks.put(urlModel, urlCheck);
                 return listChecks;
@@ -91,7 +96,7 @@ public class CheckRepository extends BaseRepository {
         return listChecks;
     }
 
-    public static Checks parsingURL(String urlModel) throws IOException {
+    public static UrlCheck parsingURL(String urlModel) throws IOException {
         Document document = Jsoup.connect(urlModel).get();
         Elements titleElement = document.select("head > title");
         Elements h1Element = document.select("h1");
@@ -107,7 +112,7 @@ public class CheckRepository extends BaseRepository {
 
         String title = titleElement.text();
         String h1 = h1Element.text();
-        String description = descriptionMeta.text(); //разобраться почему не работает вставка description
-        return new Checks(statusCode, title, h1, description, date);
+        String description = descriptionMeta.attr("content");
+        return new UrlCheck(statusCode, title, h1, description, date);
     }
 }

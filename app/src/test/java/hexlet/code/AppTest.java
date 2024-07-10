@@ -34,10 +34,10 @@ public class AppTest {
     @Test
     public void testCreateUrl() {
         JavalinTest.test(app, ((server, client) -> {
-            var requestBody = "url=https://hexlet.io";
+            var requestBody = "url=https://ru.hexlet.io";
             var response = client.post(NamedRoutes.listUrlsPath(), requestBody);
             assertThat(response.code()).isEqualTo(200);
-            assertThat(response.body().string()).contains("https://hexlet.io");
+            assertThat(response.body().string()).contains("https://ru.hexlet.io");
         }));
     }
 
