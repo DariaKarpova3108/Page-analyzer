@@ -1,5 +1,6 @@
 package hexlet.code.controllers;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.dto.MainPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsPage;
@@ -67,7 +68,6 @@ public class UrlsController {
         ctx.render("urls/showListUrls.jte", model("page", page));
     }
 
-    // ПРОВЕРИТЬ КОД МЕТОДОВ НАПИСАННЫХ НИЖЕ
     public static void showUrl(Context ctx) throws SQLException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
@@ -76,7 +76,7 @@ public class UrlsController {
         ctx.render("urls/showUrl.jte", model("page", page));
     }
 
-    public static void saveCheckUrl(Context ctx) throws SQLException, IOException {
+    public static void saveCheckUrl(Context ctx) throws SQLException, IOException, UnirestException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));

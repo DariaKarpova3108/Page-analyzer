@@ -1,5 +1,8 @@
 package hexlet.code.repository;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.model.UrlCheck;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,7 +24,6 @@ import java.util.Map;
 
 public class CheckRepository extends BaseRepository {
 
-    //добавить метод показать проверки
     public static void saveCheckedUrl(UrlCheck urlCheck) throws SQLException {
         String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
@@ -41,30 +43,6 @@ public class CheckRepository extends BaseRepository {
             }
         }
     }
-
-//    public static Optional<UrlCheck> getLastCheck(long id) throws SQLException {
-//        String sql = "SELECT * FROM url_checks WHERE id = ? " +
-//                "ORDER BY created_at DESC LIMIT 1";
-//        try (var conn = dataSource.getConnection();
-//             PreparedStatement pst = conn.prepareStatement(sql)) {
-//            pst.setLong(1, id);
-//            ResultSet resultSet = pst.executeQuery();
-//            if (resultSet.next()) {
-//                long idCheck = resultSet.getLong("id");
-//                long urlId = resultSet.getLong("url_id");
-//                var status = resultSet.getInt("status_code");
-//                var title = resultSet.getString("title");
-//                var h1 = resultSet.getString("h1");
-//                var description = resultSet.getString("description");
-//                var createdAt = resultSet.getTimestamp("created_at");
-//                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
-//                urlCheck.setUrlId(urlId);
-//                urlCheck.setId(idCheck);
-//                return Optional.of(urlCheck);
-//            }
-//        }
-//        return Optional.empty();
-//    }
 
     public static List<UrlCheck> getListCheck(long id) throws SQLException {
         String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
@@ -114,7 +92,10 @@ public class CheckRepository extends BaseRepository {
         }
     }
 
-    public static UrlCheck parsingURL(String urlModel) throws IOException {
+    public static UrlCheck parsingURL(String urlModel) throws IOException, UnirestException {
+        HttpResponse<String> response = Unirest.get(urlModel).asString();
+        int statusCode = response.getCode();
+
         Document document = Jsoup.connect(urlModel).get();
         Elements titleElement = document.select("head > title");
         Elements h1Element = document.select("h1");
@@ -123,9 +104,6 @@ public class CheckRepository extends BaseRepository {
         URI uri = URI.create(urlModel);
         URL url = uri.toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        int statusCode = conn.getResponseCode();
-        conn.disconnect();
         Timestamp date = new Timestamp(System.currentTimeMillis());
 
         String title = titleElement.text();

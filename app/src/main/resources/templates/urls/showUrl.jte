@@ -7,17 +7,6 @@
 @template.layout.page(
 page=page,
 content = @`
-
-<%--
-<div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
-                <p class="m-0">Некорректный URL</p>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
---%>
-
-<%--реализовать логику проверок так, чтобы показывались на странице конкретного сайта все проверки,
-даже если они идут подряд--%>
-
     <div class="container-lg mt-5">
         <h1>Сайт: ${page.getUrl().getName()}</h1>
         <table class="table table-bordered table-hover mt-3">
@@ -46,7 +35,7 @@ content = @`
             </form>
         </div>
         <div>
-            <table class="table table-bordered table-hover mt-3"> <%--понять как сузить страницу--%>
+            <table class="table table-bordered table-hover mt-3">
                 <thead>
                 <tr>
                     <th class="col-1">ID</th>
@@ -68,6 +57,8 @@ content = @`
                             <td>${check.getDescription()}</td>
                             <td>${check.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}</td>
                         </tr>
+                    @else
+                        <tr></tr>
                     @endfor
                 @endif
                 </tbody>

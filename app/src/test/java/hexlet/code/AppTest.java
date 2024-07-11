@@ -88,7 +88,6 @@ public class AppTest {
         }));
     }
 
-    //дописать тесты потом сюда дальше, после корректировки 7 и 8 шага
     @Test
     public void testRootUrlPathGet() throws UnirestException {
         mockWebServer.enqueue(new MockResponse().setBody("Анализатор страниц"));
