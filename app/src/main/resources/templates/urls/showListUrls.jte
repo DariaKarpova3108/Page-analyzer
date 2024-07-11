@@ -1,8 +1,9 @@
 @import hexlet.code.dto.UrlsPage
 @import hexlet.code.util.NamedRoutes
+@import java.time.format.DateTimeFormatter
 @param UrlsPage page
+@param String formatter = "dd/MM/yyyy HH:mm"
 
-<%--откорректировать ФОРМАТ ВРЕМЕНИ--%>
 <%--нужно добавить лист проверок, иначе в результате добавляется только последняя проверка последнего проверенного сайта--%>
 
 @template.layout.page(
@@ -25,12 +26,17 @@ content = @`
                     <tr>
                         <td>${url.getId()}</td>
                         <td><a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()} </a></td>
-                        @for(var urlCheck : page.getChecks().entrySet())
-                            @if(urlCheck.getKey().getId()==url.getId())
-                                <td>${urlCheck.getKey().getCreated_at().toString()}</td>
-                                <td>${urlCheck.getValue().getStatusCode()}</td>
-                            @endif
-                        @endfor
+                        @if(page.getChecks().get(url.getId())==null)
+                            <td></td>
+                            <td></td>
+                        @elseif(page.getChecks().get(url.getId())!=null)
+                            <td>
+                                ${page.getChecks().get(url.getId()).getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}
+                            </td>
+                            <td>
+                                ${page.getChecks().get(url.getId()).getStatusCode()}
+                            </td>
+                        @endif
                     </tr>
                 @endfor
             @endif

@@ -18,7 +18,7 @@ public class UrlRepository extends BaseRepository {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pst.setString(1, url.getName());
-            pst.setTimestamp(2, url.getCreated_at());
+            pst.setTimestamp(2, url.getCreatedAt());
             pst.executeUpdate();
             ResultSet generatedKeys = pst.getGeneratedKeys();
             if (generatedKeys.next()) {

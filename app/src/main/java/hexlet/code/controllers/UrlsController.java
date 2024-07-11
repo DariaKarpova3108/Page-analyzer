@@ -3,8 +3,8 @@ package hexlet.code.controllers;
 import hexlet.code.dto.MainPage;
 import hexlet.code.dto.UrlPage;
 import hexlet.code.dto.UrlsPage;
-import hexlet.code.model.UrlCheck;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
@@ -17,11 +17,12 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlsController {
-    public static void create(Context ctx) throws SQLException, IOException {
+    public static void create(Context ctx) throws SQLException {
         var inputUrl = ctx.formParam("url");
         URL url = null;
         try {
@@ -37,7 +38,6 @@ public class UrlsController {
             page.setFlash(ctx.consumeSessionAttribute("flash"));
             page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
             ctx.render("index.jte", model("page", page));
-            // ctx.redirect(NamedRoutes.rootPath());
             return;
         }
 
@@ -59,9 +59,9 @@ public class UrlsController {
     }
 
     public static void showListUrls(Context ctx) throws SQLException {
-        var listUrls = UrlRepository.getEntities();
-        var check = CheckRepository.getListLastCheck(); //проверить на корректность
-        var page = new UrlsPage(listUrls, check);
+        List<Url> urlsList = UrlRepository.getEntities();
+        var checks = CheckRepository.getListLastCheck();
+        var page = new UrlsPage(urlsList, checks);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/showListUrls.jte", model("page", page));
@@ -91,8 +91,14 @@ public class UrlsController {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
-        var lastCheck = CheckRepository.getLastCheck(id).orElse(null);
-        var page = new UrlPage(url, lastCheck);
+        var checksList = CheckRepository.getListCheck(id);
+        var page = new UrlPage(url, checksList);
         ctx.render("urls/showUrl.jte", model("page", page));
     }
+
+    /*
+    * НЕВЕРНАЯ ЛОГИАКА ПРОВЕРОК, Т К АЙДИ СЧИТАЕТ ПООЧЕРЕДНО У ВСЕХ САЙТОВ А НЕ У ОДНОГО
+    * */
 }
+
+

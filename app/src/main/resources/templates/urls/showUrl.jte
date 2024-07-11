@@ -1,18 +1,19 @@
 @import hexlet.code.dto.UrlPage
 @import hexlet.code.util.NamedRoutes
+@import java.time.format.DateTimeFormatter
 @param UrlPage page
+@param String formatter = "dd/MM/yyyy HH:mm"
 
 @template.layout.page(
 page=page,
 content = @`
-<%--откорректировать ФОРМАТ ВРЕМЕНИ--%>
 
-    <%--
-    <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
-                    <p class="m-0">Некорректный URL</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-    --%>
+<%--
+<div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
+                <p class="m-0">Некорректный URL</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+--%>
 
 <%--реализовать логику проверок так, чтобы показывались на странице конкретного сайта все проверки,
 даже если они идут подряд--%>
@@ -31,7 +32,7 @@ content = @`
             </tr>
             <tr>
                 <td>Дата создания</td>
-                <td>${page.getUrl().getCreated_at().toString()}</td>
+                <td>${page.getUrl().getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}</td>
             </tr>
             </tbody>
         </table>
@@ -57,16 +58,18 @@ content = @`
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    @if(page.getChecks()!=null)
-                        <td>${NamedRoutes.urlCheckPath(page.getChecks().getId())}</td>
-                        <td>${page.getChecks().getStatusCode()}</td>
-                        <td>${page.getChecks().getTitle()}</td>
-                        <td>${page.getChecks().getH1()}</td>
-                        <td>${page.getChecks().getDescription()}</td>
-                        <td>${page.getChecks().getCreatedAt().toString()}</td>
-                    @endif
-                </tr>
+                @if(page.getChecks()!=null)
+                    @for(var check : page.getChecks())
+                        <tr>
+                            <td>${check.getId()}</td>
+                            <td>${check.getStatusCode()}</td>
+                            <td>${check.getTitle()}</td>
+                            <td>${check.getH1()}</td>
+                            <td>${check.getDescription()}</td>
+                            <td>${check.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}</td>
+                        </tr>
+                    @endfor
+                @endif
                 </tbody>
             </table>
         </div>

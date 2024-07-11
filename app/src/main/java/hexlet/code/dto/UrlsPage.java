@@ -12,5 +12,5 @@ import java.util.Map;
 @AllArgsConstructor
 public class UrlsPage extends BasePage {
     private List<Url> urls;
-    private Map<Url, UrlCheck> checks;
+    private Map<Long, UrlCheck> checks;
 }

@@ -15,9 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CheckRepository extends BaseRepository {
 
@@ -42,43 +40,41 @@ public class CheckRepository extends BaseRepository {
         }
     }
 
-    public static Optional<UrlCheck> getLastCheck(long id) throws SQLException {
-        String sql = "SELECT * FROM url_checks WHERE id = ? " +
-                "ORDER BY created_at DESC LIMIT 1";
+//    public static Optional<UrlCheck> getLastCheck(long id) throws SQLException {
+//        String sql = "SELECT * FROM url_checks WHERE id = ? " +
+//                "ORDER BY created_at DESC LIMIT 1";
+//        try (var conn = dataSource.getConnection();
+//             PreparedStatement pst = conn.prepareStatement(sql)) {
+//            pst.setLong(1, id);
+//            ResultSet resultSet = pst.executeQuery();
+//            if (resultSet.next()) {
+//                long idCheck = resultSet.getLong("id");
+//                long urlId = resultSet.getLong("url_id");
+//                var status = resultSet.getInt("status_code");
+//                var title = resultSet.getString("title");
+//                var h1 = resultSet.getString("h1");
+//                var description = resultSet.getString("description");
+//                var createdAt = resultSet.getTimestamp("created_at");
+//                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
+//                urlCheck.setUrlId(urlId);
+//                urlCheck.setId(idCheck);
+//                return Optional.of(urlCheck);
+//            }
+//        }
+//        return Optional.empty();
+//    }
+
+    public static List<UrlCheck> getListCheck(long id) throws SQLException {
+        String sql = "SELECT * FROM url_checks " +
+                "INNER JOIN urls ON url_checks.url_id = urls.id " +
+                "WHERE urls.id = ? " +
+                "ORDER BY url_checks.created_at DESC";
+        List<UrlCheck> listChecks = new ArrayList<>();
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setLong(1, id);
             ResultSet resultSet = pst.executeQuery();
-            if (resultSet.next()) {
-                long urlId = resultSet.getLong("url_id");
-                var status = resultSet.getInt("status_code");
-                var title = resultSet.getString("title");
-                var h1 = resultSet.getString("h1");
-                var description = resultSet.getString("description");
-                var createdAt = resultSet.getTimestamp("created_at");
-                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
-                urlCheck.setUrlId(urlId);
-                return Optional.of(urlCheck);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public static Map<Url, UrlCheck> getListLastCheck() throws SQLException {
-        String sql = "SELECT * FROM url_checks " +
-                "INNER JOIN urls ON url_checks.url_id = urls.id" +
-                " ORDER BY url_checks.created_at DESC LIMIT 1";
-        Map<Url, UrlCheck> listChecks = new LinkedHashMap<>();
-        try (var conn = dataSource.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
-            ResultSet resultSet = pst.executeQuery();
             while (resultSet.next()) {
-                var id = resultSet.getLong("urls.id");
-                var name = resultSet.getString("urls.name");
-                var date = resultSet.getTimestamp("urls.created_at");
-                var urlModel = new Url(name, date);
-                urlModel.setId(id);
-
                 var idCheck = resultSet.getLong("url_checks.id");
                 var urlId = resultSet.getLong("url_checks.url_id");
                 var status = resultSet.getInt("url_checks.status_code");
@@ -89,11 +85,35 @@ public class CheckRepository extends BaseRepository {
                 var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
                 urlCheck.setUrlId(urlId);
                 urlCheck.setId(idCheck);
-                listChecks.put(urlModel, urlCheck);
+                listChecks.add(urlCheck);
                 return listChecks;
             }
         }
         return listChecks;
+    }
+
+    public static Map<Long, UrlCheck> getListLastCheck() throws SQLException {
+        String sql = "SELECT DISTINCT ON (url_id) * FROM url_checks " +
+                " ORDER BY url_checks.url_id DESC, url_checks.id DESC";
+        Map<Long, UrlCheck> listChecks = new HashMap<>();
+        try (var conn = dataSource.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            ResultSet resultSet = pst.executeQuery();
+            while (resultSet.next()) {
+                var idCheck = resultSet.getLong("url_checks.id");
+                var urlId = resultSet.getLong("url_checks.url_id");
+                var status = resultSet.getInt("url_checks.status_code");
+                var title = resultSet.getString("url_checks.title");
+                var h1 = resultSet.getString("url_checks.h1");
+                var description = resultSet.getString("url_checks.description");
+                var createdAt = resultSet.getTimestamp("url_checks.created_at");
+                var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
+                urlCheck.setUrlId(urlId);
+                urlCheck.setId(idCheck);
+                listChecks.put(urlId, urlCheck);
+            }
+            return listChecks;
+        }
     }
 
     public static UrlCheck parsingURL(String urlModel) throws IOException {
