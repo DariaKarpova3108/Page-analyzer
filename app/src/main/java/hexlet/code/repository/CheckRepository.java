@@ -1,7 +1,6 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
-import hexlet.code.model.Url;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -15,12 +14,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CheckRepository extends BaseRepository {
 
     //добавить метод показать проверки
-    public static void saveCheckedUrl(UrlCheck urlCheck) throws SQLException, IOException {
+    public static void saveCheckedUrl(UrlCheck urlCheck) throws SQLException {
         String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -65,31 +67,27 @@ public class CheckRepository extends BaseRepository {
 //    }
 
     public static List<UrlCheck> getListCheck(long id) throws SQLException {
-        String sql = "SELECT * FROM url_checks " +
-                "INNER JOIN urls ON url_checks.url_id = urls.id " +
-                "WHERE urls.id = ? " +
-                "ORDER BY url_checks.created_at DESC";
+        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
         List<UrlCheck> listChecks = new ArrayList<>();
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setLong(1, id);
             ResultSet resultSet = pst.executeQuery();
             while (resultSet.next()) {
-                var idCheck = resultSet.getLong("url_checks.id");
-                var urlId = resultSet.getLong("url_checks.url_id");
-                var status = resultSet.getInt("url_checks.status_code");
-                var title = resultSet.getString("url_checks.title");
-                var h1 = resultSet.getString("url_checks.h1");
-                var description = resultSet.getString("url_checks.description");
-                var createdAt = resultSet.getTimestamp("url_checks.created_at");
+                var idCheck = resultSet.getLong("id");
+                var urlId = resultSet.getLong("url_id");
+                var status = resultSet.getInt("status_code");
+                var title = resultSet.getString("title");
+                var h1 = resultSet.getString("h1");
+                var description = resultSet.getString("description");
+                var createdAt = resultSet.getTimestamp("created_at");
                 var urlCheck = new UrlCheck(status, title, h1, description, createdAt);
                 urlCheck.setUrlId(urlId);
                 urlCheck.setId(idCheck);
                 listChecks.add(urlCheck);
-                return listChecks;
             }
+            return listChecks;
         }
-        return listChecks;
     }
 
     public static Map<Long, UrlCheck> getListLastCheck() throws SQLException {

@@ -95,10 +95,6 @@ public class UrlsController {
         var page = new UrlPage(url, checksList);
         ctx.render("urls/showUrl.jte", model("page", page));
     }
-
-    /*
-    * НЕВЕРНАЯ ЛОГИАКА ПРОВЕРОК, Т К АЙДИ СЧИТАЕТ ПООЧЕРЕДНО У ВСЕХ САЙТОВ А НЕ У ОДНОГО
-    * */
 }
 
 
