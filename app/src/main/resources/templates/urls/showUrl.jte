@@ -57,8 +57,6 @@ content = @`
                             <td>${check.getDescription()}</td>
                             <td>${check.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}</td>
                         </tr>
-                    @else
-                        <tr></tr>
                     @endfor
                 @endif
                 </tbody>

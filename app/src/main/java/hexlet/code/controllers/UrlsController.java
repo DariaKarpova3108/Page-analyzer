@@ -33,6 +33,7 @@ public class UrlsController {
                 url = uri.toURL();
             }
         } catch (MalformedURLException e) {
+            ctx.status(400);
             ctx.sessionAttribute("flash-type", "Некорректный URL");
             ctx.sessionAttribute("flash", "wrong");
             var page = new MainPage();
@@ -49,10 +50,12 @@ public class UrlsController {
 
         if (UrlRepository.findByName(urlString).isEmpty()) {
             UrlRepository.save(urlModel);
+            ctx.status(200);
             ctx.sessionAttribute("flash", "success");
             ctx.sessionAttribute("flash-type", "Страница успешно добавлена");
             ctx.redirect(NamedRoutes.listUrlsPath());
         } else if (UrlRepository.findByName(urlString).isPresent()) {
+            ctx.status(303);
             ctx.sessionAttribute("flash", "unchanged");
             ctx.sessionAttribute("flash-type", "Страница уже существует");
             ctx.redirect(NamedRoutes.listUrlsPath());

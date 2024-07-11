@@ -70,6 +70,24 @@ public class AppTest {
     }
 
     @Test
+    public void testListUrlAfterAddedSomeUrls() throws SQLException {
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        var url1 = new Url("https://hexlet.io", date);
+        var url2 = new Url("https://example.com", date);
+        UrlRepository.save(url1);
+        UrlRepository.save(url2);
+
+        JavalinTest.test(app, ((server, client) -> {
+            var response = client.get(NamedRoutes.listUrlsPath());
+            assertThat(response.code()).isEqualTo(200);
+
+            String responseBody = response.body().string();
+            assertThat(responseBody).contains("https://hexlet.io");
+            assertThat(responseBody).contains("https://example.com");
+        }));
+    }
+
+    @Test
     public void testShowUrl() throws SQLException {
         Timestamp date = new Timestamp(System.currentTimeMillis());
         var url = new Url("https://hexlet.io", date);
@@ -85,6 +103,45 @@ public class AppTest {
         JavalinTest.test(app, ((server, client) -> {
             var response = client.get(NamedRoutes.urlPath("9999"));
             assertThat(response.code()).isEqualTo(404);
+        }));
+    }
+
+    @Test
+    public void testInvalidUrl() {
+        JavalinTest.test(app, ((server, client) -> {
+            var requestBody = "url=htps://ru.hexlet.io";
+            var response = client.post(NamedRoutes.listUrlsPath(), requestBody);
+            assertThat(response.code()).isEqualTo(400);
+            assertThat(response.body().toString().contains("Некорректный URL"));
+        }));
+    }
+
+    @Test
+    public void testInvalidUrl2() {
+        JavalinTest.test(app, ((server, client) -> {
+            var requestBody = "url=";
+            var response = client.post(NamedRoutes.listUrlsPath(), requestBody);
+            assertThat(response.code()).isEqualTo(500);
+            assertThat(response.body().toString().contains("Некорректный URL"));
+        }));
+    }
+
+    @Test
+    public void testCreateExistingUrl() throws SQLException {
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        var url = new Url("https://hexlet.io", date);
+        UrlRepository.save(url);
+
+        JavalinTest.test(app, ((server, client) -> {
+            var requestBody = "url=https://hexlet.io";
+            var response = client.post(NamedRoutes.listUrlsPath(), requestBody);
+            assertThat(response.code()).isIn(200, 302, 303);
+
+            if (response.code() == 302 || response.code() == 303) {
+                String responseLocation = response.header("Location");
+                response = client.get(NamedRoutes.listUrlsPath());
+            }
+            assertThat(response.code()).isEqualTo(200);
         }));
     }
 
@@ -169,4 +226,30 @@ public class AppTest {
         assertEquals(200, response.getCode());
         assertEquals("Information about url with his parsing", response.getBody());
     }
+
+
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
+//    @Test
+//    public void testShowUrlCheck() {
+//
+//    }
 }
