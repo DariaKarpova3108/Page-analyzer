@@ -46,7 +46,7 @@ public class App {
         return templateEngine;
     }
 
-    public static Javalin getApp() throws SQLException, IOException {
+    public static Javalin getApp() throws IOException {
         String url = getUrl();
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(url);

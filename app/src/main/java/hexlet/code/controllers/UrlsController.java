@@ -12,7 +12,6 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -79,25 +78,47 @@ public class UrlsController {
         ctx.render("urls/showUrl.jte", model("page", page));
     }
 
-    public static void saveCheckUrl(Context ctx) throws SQLException, IOException, UnirestException {
+    public static void saveCheckUrl(Context ctx) throws SQLException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
-        UrlCheck checks = CheckRepository.parsingURL(url.getName());
-        checks.setUrlId(url.getId());
-        CheckRepository.saveCheckedUrl(checks);
-        ctx.redirect(NamedRoutes.urlCheckPath(id));
+        try {
+            UrlCheck checks = CheckRepository.parsingURL(url.getName());
+            checks.setUrlId(url.getId());
+            CheckRepository.saveCheckedUrl(checks);
+            ctx.sessionAttribute("flash", "success");
+            ctx.sessionAttribute("flash-type", "Страница успешно проверена");
+            ctx.redirect(NamedRoutes.urlCheckPath(id));
+        } catch (UnirestException e) {
+            ctx.sessionAttribute("flash", "danger");
+            ctx.sessionAttribute("flash-type", "Некорректный адрес");
+            ctx.redirect(NamedRoutes.urlCheckPath(id));
+        }
+
     }
 
-    //добавить вывод флеш-сообщений
-    public static void checkUrl(Context ctx) throws SQLException, IOException {
+//    public static void checkUrl(Context ctx) throws SQLException {
+//        long id = ctx.pathParamAsClass("id", Long.class).get();
+//        Url url = UrlRepository.find(id)
+//                .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
+//        var checksList = CheckRepository.getListCheck(id);
+//        var page = new UrlPage(url, checksList);
+//        page.setFlash(ctx.consumeSessionAttribute("flash"));
+//        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
+//        ctx.render("urls/showUrl.jte", model("page", page));
+//    }
+
+    public static void checkUrl(Context ctx) throws SQLException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
         var checksList = CheckRepository.getListCheck(id);
-        var page = new UrlPage(url, checksList);
+        var page = new UrlPage(url, checksList.isEmpty() ? null : checksList);
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/showUrl.jte", model("page", page));
     }
+
 }
 
 

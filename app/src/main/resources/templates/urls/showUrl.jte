@@ -25,9 +25,7 @@ content = @`
             </tr>
             </tbody>
         </table>
-    </div>
 
-    <div class="container-lg mt-5">
         <h2 class="mt-5">Проверки</h2>
         <div>
             <form method="post" name="check" action="${NamedRoutes.urlCheckPath(page.getUrl().getId())}">
@@ -58,6 +56,8 @@ content = @`
                             <td>${check.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern(formatter))}</td>
                         </tr>
                     @endfor
+                @else
+                    <tr></tr>
                 @endif
                 </tbody>
             </table>

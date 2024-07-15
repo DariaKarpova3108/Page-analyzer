@@ -20,15 +20,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppTest {
     private static Javalin app;
     private static MockWebServer mockWebServer;
 
     @BeforeEach
-    public final void setUp() throws SQLException, IOException {
+    public final void setUp() throws IOException {
         app = App.getApp();
     }
 
@@ -227,29 +227,38 @@ public class AppTest {
         assertEquals("Information about url with his parsing", response.getBody());
     }
 
+    //    @Test
+//    public void testParsingURL() throws UnirestException, IOException {
+//        mockWebServer.enqueue(new MockResponse()
+//                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
+//
+//        String baseUrl = mockWebServer.url("/").toString();
+//        UrlCheck result = CheckRepository.parsingURL(baseUrl);
+//
+//        assertEquals(200, result.getStatusCode());
+//        assertEquals("Анализатор страниц", result.getTitle());
+//        assertEquals("Анализатор страниц", result.getH1());
+//        assertEquals("", result.getDescription());
+//    }
 
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
-//    @Test
-//    public void testShowUrlCheck() {
-//
-//    }
+    /*
+    * @Test
+public void testShowUrlCheckResults() throws SQLException, IOException, UnirestException {
+    Timestamp date = new Timestamp(System.currentTimeMillis());
+    var url = new Url("https://hexlet.io", date);
+    UrlRepository.save(url);
+
+    UrlCheck check = new UrlCheck(200, "Hexlet", "Welcome", "Description", date);
+    check.setUrlId(url.getId());
+    CheckRepository.saveCheckedUrl(check);
+
+    JavalinTest.test(app, ((server, client) -> {
+        var response = client.get(NamedRoutes.urlPath(url.getId()));
+        assertThat(response.code()).isEqualTo(200);
+        assertThat(response.body().string()).contains("Hexlet");
+        assertThat(response.body().string()).contains("Welcome");
+        assertThat(response.body().string()).contains("Description");
+    }));
+}
+    * */
 }

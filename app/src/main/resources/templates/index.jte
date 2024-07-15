@@ -2,8 +2,6 @@
 @import hexlet.code.util.NamedRoutes
 @param MainPage page
 
-<%--нужно будет изсенить адреса ссылок--%>
-
 @template.layout.page(
 page = page,
 content = @`

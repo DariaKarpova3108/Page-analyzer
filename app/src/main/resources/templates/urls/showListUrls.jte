@@ -4,8 +4,6 @@
 @param UrlsPage page
 @param String formatter = "dd/MM/yyyy HH:mm"
 
-<%--нужно добавить лист проверок, иначе в результате добавляется только последняя проверка последнего проверенного сайта--%>
-
 @template.layout.page(
 page=page,
 content = @`
