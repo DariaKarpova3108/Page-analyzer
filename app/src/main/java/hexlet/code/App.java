@@ -46,6 +46,10 @@ public class App {
 
     public static Javalin getApp() throws IOException {
         var hikariConfig = new HikariConfig();
+
+        hikariConfig.setMinimumIdle(5);
+        hikariConfig.setMaximumPoolSize(10);
+
         hikariConfig.setJdbcUrl(getUrl());
 
         var dataSource = new HikariDataSource(hikariConfig);
@@ -88,7 +92,7 @@ public class App {
         }
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
+    public static void main(String[] args) throws IOException {
         var app = getApp();
         app.start(getPort());
     }

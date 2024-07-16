@@ -87,21 +87,43 @@ public class CheckRepository extends BaseRepository {
             return listChecks;
         }
     }
+//    public static UrlCheck parsingURL(String urlModel) throws UnirestException {
+//        HttpResponse<String> response = Unirest.get(urlModel).asString();
+//        int statusCode = response.getCode();
+//
+//        Document document = Jsoup.parse(response.getBody());
+//        Elements titleElement = document.select("head > title");
+//        Elements h1Element = document.select("h1");
+//        Elements descriptionMeta = document.select("meta[name=description]");
+//
+//        Timestamp date = new Timestamp(System.currentTimeMillis());
+//
+//        String title = titleElement.text();
+//        String h1 = h1Element.text();
+//        String description = descriptionMeta.attr("content");
+//        return new UrlCheck(statusCode, title, h1, description, date);
+//    }
+
+    private static final Map<String, UrlCheck> cash = new HashMap<>();
 
     public static UrlCheck parsingURL(String urlModel) throws UnirestException {
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        if (cash.containsKey(urlModel)) {
+            cash.get(urlModel).setCreatedAt(date);
+            return cash.get(urlModel);
+        }
+
         HttpResponse<String> response = Unirest.get(urlModel).asString();
         int statusCode = response.getCode();
-
         Document document = Jsoup.parse(response.getBody());
         Elements titleElement = document.select("head > title");
         Elements h1Element = document.select("h1");
         Elements descriptionMeta = document.select("meta[name=description]");
-
-        Timestamp date = new Timestamp(System.currentTimeMillis());
-
         String title = titleElement.text();
         String h1 = h1Element.text();
         String description = descriptionMeta.attr("content");
-        return new UrlCheck(statusCode, title, h1, description, date);
+        var urlChecks = new UrlCheck(statusCode, title, h1, description, date);
+        cash.put(urlModel, urlChecks);
+        return urlChecks;
     }
 }
