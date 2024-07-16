@@ -4,6 +4,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
@@ -227,38 +229,39 @@ public class AppTest {
         assertEquals("Information about url with his parsing", response.getBody());
     }
 
-    //    @Test
-//    public void testParsingURL() throws UnirestException, IOException {
-//        mockWebServer.enqueue(new MockResponse()
-//                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
+    @Test
+    public void testParsingURL() throws UnirestException, IOException {
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
+
+        String baseUrl = mockWebServer.url("/").toString();
+        UrlCheck result = CheckRepository.parsingURL(baseUrl);
+
+        assertEquals(200, result.getStatusCode());
+        assertEquals("Анализатор страниц", result.getTitle());
+        assertEquals("Анализатор страниц", result.getH1());
+    }
 //
-//        String baseUrl = mockWebServer.url("/").toString();
-//        UrlCheck result = CheckRepository.parsingURL(baseUrl);
-//
-//        assertEquals(200, result.getStatusCode());
-//        assertEquals("Анализатор страниц", result.getTitle());
-//        assertEquals("Анализатор страниц", result.getH1());
-//        assertEquals("", result.getDescription());
+////    @Test
+////    public void testShowUrlCheckResults() throws SQLException, IOException, UnirestException {
+////        Timestamp date = new Timestamp(System.currentTimeMillis());
+////        var url = new Url("https://hh.ru", date);
+////        UrlRepository.save(url);
+////
+////        UrlCheck check = CheckRepository.parsingURL(url.getName());
+////        check.setUrlId(url.getId());
+////        CheckRepository.saveCheckedUrl(check);
+////
+////        JavalinTest.test(app, ((server, client) -> {
+////            var response = client.get(NamedRoutes.urlPath(url.getId()));
+////            String responseBody = response.body().string();
+////            System.out.println(responseBody);
+////
+////            assertThat(response.code()).isEqualTo(200);
+////            assertThat(response.body().string()).contains(check.getTitle());
+////            assertThat(response.body().string()).contains(check.getH1());
+////            assertThat(response.body().string()).contains(check.getDescription());
+////        }));
 //    }
 
-    /*
-    * @Test
-public void testShowUrlCheckResults() throws SQLException, IOException, UnirestException {
-    Timestamp date = new Timestamp(System.currentTimeMillis());
-    var url = new Url("https://hexlet.io", date);
-    UrlRepository.save(url);
-
-    UrlCheck check = new UrlCheck(200, "Hexlet", "Welcome", "Description", date);
-    check.setUrlId(url.getId());
-    CheckRepository.saveCheckedUrl(check);
-
-    JavalinTest.test(app, ((server, client) -> {
-        var response = client.get(NamedRoutes.urlPath(url.getId()));
-        assertThat(response.code()).isEqualTo(200);
-        assertThat(response.body().string()).contains("Hexlet");
-        assertThat(response.body().string()).contains("Welcome");
-        assertThat(response.body().string()).contains("Description");
-    }));
-}
-    * */
 }
