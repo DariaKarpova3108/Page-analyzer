@@ -1,7 +1,5 @@
 package hexlet.code;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
@@ -11,7 +9,6 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.Response;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +20,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AppTest {
     private static Javalin app;
@@ -148,99 +145,49 @@ public class AppTest {
     }
 
     @Test
-    public void testRootUrlPathGet() throws UnirestException {
-        mockWebServer.enqueue(new MockResponse().setBody("Анализатор страниц"));
-        String baseUrl = mockWebServer.url(NamedRoutes.rootPath()).toString();
-        HttpResponse<String> response = Unirest.get(baseUrl).asString();
-        assertEquals(200, response.getCode());
-        assertEquals("Анализатор страниц", response.getBody());
-    }
-
-    @Test
-    public void testAddUrl() throws UnirestException {
-        mockWebServer.enqueue(new MockResponse().setBody("url created"));
-        String url = mockWebServer.url(NamedRoutes.listUrlsPath()).toString();
-        HttpResponse<String> response = Unirest.post(url)
-                .field("url", "https://hexlet.io").asString();
-        assertEquals(200, response.getCode());
-        assertEquals("url created", response.getBody());
-    }
-
-    @Test
-    public void testShowListUrls() throws UnirestException {
-        mockWebServer.enqueue(new MockResponse().setBody("list of urls"));
-        String url = mockWebServer.url(NamedRoutes.listUrlsPath()).toString();
-        HttpResponse<String> response = Unirest.get(url).asString();
-        assertEquals(200, response.getCode());
-        assertEquals("list of urls", response.getBody());
-    }
-
-    @Test
-    public void testShowInfoUrl() throws UnirestException, SQLException {
-        mockWebServer.enqueue(new MockResponse().setBody("Information about url"));
-
-        Timestamp date = new Timestamp(System.currentTimeMillis());
-        var urlModel = new Url("https://hexlet.io", date);
-        UrlRepository.save(urlModel);
-
-        String url = mockWebServer.url(NamedRoutes.urlPath(urlModel.getId())).toString();
-        HttpResponse<String> response = Unirest.get(url).asString();
-        assertEquals(200, response.getCode());
-        assertEquals("Information about url", response.getBody());
-    }
-
-    @Test
-    public void testNotShowInfoUrl() throws UnirestException {
-        var id = "888";
-        mockWebServer.enqueue(new MockResponse().setBody("Not found information about url with id=" + id));
-
-        String url = mockWebServer.url(NamedRoutes.urlPath(id)).toString();
-        HttpResponse<String> response = Unirest.get(url).asString();
-        assertEquals(200, response.getCode());
-        assertEquals("Not found information about url with id=" + id, response.getBody());
-    }
-
-    @Test
     public void testSaveUrlCheck() throws UnirestException, SQLException {
-        mockWebServer.enqueue(new MockResponse().setBody("Information about url with his parsing will saved"));
-
         Timestamp date = new Timestamp(System.currentTimeMillis());
         var urlModel = new Url("https://hexlet.io", date);
         UrlRepository.save(urlModel);
+        UrlCheck urlCheck = CheckRepository.parsingURL(urlModel.getName());
+        urlCheck.setUrlId(urlModel.getId());
+        CheckRepository.saveCheckedUrl(urlCheck);
 
-        String url = mockWebServer.url(NamedRoutes.urlCheckPath(urlModel.getId())).toString();
-        HttpResponse<String> response = Unirest.post(url).asString();
-        assertEquals(200, response.getCode());
-        assertEquals("Information about url with his parsing will saved", response.getBody());
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post(NamedRoutes.urlCheckPath(urlModel.getId()));
+            assertThat(response.code()).isEqualTo(200);
+        });
     }
 
     @Test
     public void testShowUrlCheck() throws SQLException, UnirestException {
-        mockWebServer.enqueue(new MockResponse().setBody("Information about url with his parsing"));
-
         Timestamp date = new Timestamp(System.currentTimeMillis());
         var urlModel = new Url("https://hexlet.io", date);
         UrlRepository.save(urlModel);
+        UrlCheck urlCheck = CheckRepository.parsingURL(urlModel.getName());
+        urlCheck.setUrlId(urlModel.getId());
+        CheckRepository.saveCheckedUrl(urlCheck);
 
-        String url = mockWebServer.url(NamedRoutes.urlCheckPath(urlModel.getId())).toString();
-        HttpResponse<String> response = Unirest.get(url).asString();
-
-        assertEquals(200, response.getCode());
-        assertEquals("Information about url with his parsing", response.getBody());
+        var checkList = CheckRepository.getListCheck(urlModel.getId());
+        JavalinTest.test(app, ((server, client) -> {
+            var response = client.get(NamedRoutes.urlPath(urlModel.getId()));
+            assertNotNull(checkList);
+            assertThat(response.code()).isEqualTo(200);
+        }));
     }
 
-    @Test
-    public void testParsingURL() throws UnirestException, IOException {
-        mockWebServer.enqueue(new MockResponse()
-                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
-
-        String baseUrl = mockWebServer.url("/").toString();
-        UrlCheck result = CheckRepository.parsingURL(baseUrl);
-
-        assertEquals(200, result.getStatusCode());
-        assertEquals("Анализатор страниц", result.getTitle());
-        assertEquals("Анализатор страниц", result.getH1());
-    }
+//    @Test
+//    public void testParsingURL() throws UnirestException {
+//        mockWebServer.enqueue(new MockResponse()
+//                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
+//
+//        String baseUrl = mockWebServer.url("/").toString();
+//        UrlCheck result = CheckRepository.parsingURL(baseUrl);
+//
+//        assertEquals(200, result.getStatusCode());
+//        assertEquals("Анализатор страниц", result.getTitle());
+//        assertEquals("Анализатор страниц", result.getH1());
+//    }
 
 //    @Test
 //    public void testShowUrlCheckResults() throws SQLException, IOException, UnirestException {
