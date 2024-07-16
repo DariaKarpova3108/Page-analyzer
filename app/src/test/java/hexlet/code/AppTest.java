@@ -175,40 +175,4 @@ public class AppTest {
             assertThat(response.code()).isEqualTo(200);
         }));
     }
-
-//    @Test
-//    public void testParsingURL() throws UnirestException {
-//        mockWebServer.enqueue(new MockResponse()
-//                .setBody("<html><head><title>Анализатор страниц</title><meta name='description' content=''></head><body><h1>Анализатор страниц</h1></body></html>"));
-//
-//        String baseUrl = mockWebServer.url("/").toString();
-//        UrlCheck result = CheckRepository.parsingURL(baseUrl);
-//
-//        assertEquals(200, result.getStatusCode());
-//        assertEquals("Анализатор страниц", result.getTitle());
-//        assertEquals("Анализатор страниц", result.getH1());
-//    }
-
-//    @Test
-//    public void testShowUrlCheckResults() throws SQLException, IOException, UnirestException {
-//        Timestamp date = new Timestamp(System.currentTimeMillis());
-//        var url = new Url("https://hh.ru", date);
-//        UrlRepository.save(url);
-//
-//        UrlCheck check = CheckRepository.parsingURL(url.getName());
-//        check.setUrlId(url.getId());
-//        CheckRepository.saveCheckedUrl(check);
-//
-//        JavalinTest.test(app, ((server, client) -> {
-//            var response = client.get(NamedRoutes.urlPath(url.getId()));
-//            String responseBody = response.body().string();
-//            System.out.println(responseBody);
-//
-//            assertThat(response.code()).isEqualTo(200);
-//            assertThat(responseBody.contains(check.getTitle());
-//            assertThat(responseBody.contains(check.getH1());
-//            assertThat(responseBody.contains(check.getDescription());
-//        });
-//    }
-
 }

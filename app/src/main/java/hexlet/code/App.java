@@ -34,10 +34,6 @@ public class App {
         return System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1");
     }
 
-    //Объект TemplateEngine, который используется для рендеринга HTML-шаблонов.
-    //ClassLoader используется для загрузки классов и ресурсов.
-    // ResourceCodeResolver отвечает за нахождение и загрузку шаблонов из указанного местоположения
-    //TemplateEngine, который будет использовать codeResolver для нахождения шаблонов и генерировать HTML-контент
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);

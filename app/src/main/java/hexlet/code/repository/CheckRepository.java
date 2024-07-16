@@ -21,7 +21,8 @@ import java.util.Map;
 public class CheckRepository extends BaseRepository {
 
     public static void saveCheckedUrl(UrlCheck urlCheck) throws SQLException {
-        String sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks "
+                + "(status_code, title, h1, description, url_id, created_at) VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pst.setInt(1, urlCheck.getStatusCode());
@@ -65,8 +66,8 @@ public class CheckRepository extends BaseRepository {
     }
 
     public static Map<Long, UrlCheck> getListLastCheck() throws SQLException {
-        String sql = "SELECT DISTINCT ON (url_id) * FROM url_checks " +
-                " ORDER BY url_id DESC, id DESC";
+        String sql = "SELECT DISTINCT ON (url_id) * FROM url_checks "
+                + " ORDER BY url_id DESC, id DESC";
         Map<Long, UrlCheck> listChecks = new HashMap<>();
         try (var conn = dataSource.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
@@ -87,30 +88,14 @@ public class CheckRepository extends BaseRepository {
             return listChecks;
         }
     }
-//    public static UrlCheck parsingURL(String urlModel) throws UnirestException {
-//        HttpResponse<String> response = Unirest.get(urlModel).asString();
-//        int statusCode = response.getCode();
-//
-//        Document document = Jsoup.parse(response.getBody());
-//        Elements titleElement = document.select("head > title");
-//        Elements h1Element = document.select("h1");
-//        Elements descriptionMeta = document.select("meta[name=description]");
-//
-//        Timestamp date = new Timestamp(System.currentTimeMillis());
-//
-//        String title = titleElement.text();
-//        String h1 = h1Element.text();
-//        String description = descriptionMeta.attr("content");
-//        return new UrlCheck(statusCode, title, h1, description, date);
-//    }
 
-    private static final Map<String, UrlCheck> cash = new HashMap<>();
+    private static final Map<String, UrlCheck> CASH = new HashMap<>();
 
     public static UrlCheck parsingURL(String urlModel) throws UnirestException {
         Timestamp date = new Timestamp(System.currentTimeMillis());
-        if (cash.containsKey(urlModel)) {
-            cash.get(urlModel).setCreatedAt(date);
-            return cash.get(urlModel);
+        if (CASH.containsKey(urlModel)) {
+            CASH.get(urlModel).setCreatedAt(date);
+            return CASH.get(urlModel);
         }
 
         HttpResponse<String> response = Unirest.get(urlModel).asString();
@@ -123,7 +108,7 @@ public class CheckRepository extends BaseRepository {
         String h1 = h1Element.text();
         String description = descriptionMeta.attr("content");
         var urlChecks = new UrlCheck(statusCode, title, h1, description, date);
-        cash.put(urlModel, urlChecks);
+        CASH.put(urlModel, urlChecks);
         return urlChecks;
     }
 }
