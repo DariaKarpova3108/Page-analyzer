@@ -70,14 +70,6 @@ public class UrlsController {
         ctx.render("urls/showListUrls.jte", model("page", page));
     }
 
-    public static void showUrl(Context ctx) throws SQLException {
-        long id = ctx.pathParamAsClass("id", Long.class).get();
-        Url url = UrlRepository.find(id)
-                .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
-        UrlPage page = new UrlPage(url, null);
-        ctx.render("urls/showUrl.jte", model("page", page));
-    }
-
     public static void saveCheckUrl(Context ctx) throws SQLException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
@@ -88,37 +80,23 @@ public class UrlsController {
             CheckRepository.saveCheckedUrl(checks);
             ctx.sessionAttribute("flash", "success");
             ctx.sessionAttribute("flash-type", "Страница успешно проверена");
-            ctx.redirect(NamedRoutes.urlCheckPath(id));
         } catch (UnirestException e) {
             ctx.sessionAttribute("flash", "danger");
             ctx.sessionAttribute("flash-type", "Некорректный адрес");
-            ctx.redirect(NamedRoutes.urlCheckPath(id));
         }
-
+        ctx.redirect(NamedRoutes.urlPath(id));
     }
 
-//    public static void checkUrl(Context ctx) throws SQLException {
-//        long id = ctx.pathParamAsClass("id", Long.class).get();
-//        Url url = UrlRepository.find(id)
-//                .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
-//        var checksList = CheckRepository.getListCheck(id);
-//        var page = new UrlPage(url, checksList);
-//        page.setFlash(ctx.consumeSessionAttribute("flash"));
-//        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
-//        ctx.render("urls/showUrl.jte", model("page", page));
-//    }
-
-    public static void checkUrl(Context ctx) throws SQLException {
+    public static void showUrl(Context ctx) throws SQLException {
         long id = ctx.pathParamAsClass("id", Long.class).get();
         Url url = UrlRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("URL with id:" + id + " not found"));
         var checksList = CheckRepository.getListCheck(id);
-        var page = new UrlPage(url, checksList.isEmpty() ? null : checksList);
+        UrlPage page = new UrlPage(url, checksList);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/showUrl.jte", model("page", page));
     }
-
 }
 
 
