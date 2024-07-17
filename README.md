@@ -1,5 +1,5 @@
-## Анализатор страниц - – полноценный веб-сайт на базе фреймворка Javalin.
-_Описание: сайт, который анализирует указанные страницы на SEO пригодность._
+## Page analyzer is a full-fledged website based on the Javalin framework.
+_Description: a site that analyzes specified pages for SEO suitability._
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/DariaKarpova3108/java-project-72/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DariaKarpova3108/java-project-72/actions)
