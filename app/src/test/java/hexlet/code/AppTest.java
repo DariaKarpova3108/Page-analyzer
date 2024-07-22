@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -197,21 +198,22 @@ public class AppTest {
                 var requestBody = "url=" + url;
                 assertThat(client.post("/urls", requestBody).code()).isEqualTo(200);
 
-                var actualUrl = UrlRepository.findByName(url);
+                var actualUrl = UrlRepository.findByName(url).get();
                 assertThat(actualUrl).isNotNull();
-                assertThat(actualUrl.get().getName()).isEqualTo(url);
+                assertThat(actualUrl.getName()).isEqualTo(url);
 
-                client.post("/urls/" + actualUrl.get().getId() + "/check");
+                client.post("/urls/" + actualUrl.getId() + "/check");
 
-                assertThat(client.get("/urls/" + actualUrl.get().getId()).code())
+                assertThat(client.get("/urls/" + actualUrl.getId()).code())
                         .isEqualTo(200);
 
-                var actualCheck = CheckRepository.getListCheck(actualUrl.get().getId());
+                List<UrlCheck> actualCheck = CheckRepository.getListCheck(actualUrl.getId());
+                var check = actualCheck.getLast();
                 assertThat(actualCheck).isNotNull();
-                assertThat(actualCheck.getLast().getTitle()).isEqualTo("Test page");
-                assertThat(actualCheck.getLast().getH1())
+                assertThat(check.getTitle()).isEqualTo("Test page");
+                assertThat(check.getH1())
                         .isEqualTo("Do not expect a miracle, miracles yourself!");
-                assertThat(actualCheck.getLast().getDescription()).isEqualTo("statements of great people");
+                assertThat(check.getDescription()).isEqualTo("statements of great people");
             });
         }
     }
