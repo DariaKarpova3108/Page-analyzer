@@ -202,7 +202,7 @@ public class AppTest {
                 assertThat(actualUrl).isNotNull();
                 assertThat(actualUrl.getName()).isEqualTo(url);
 
-                client.post("/urls/" + actualUrl.getId() + "/check");
+                client.post("/urls/" + actualUrl.getId() + "/checks");
 
                 assertThat(client.get("/urls/" + actualUrl.getId()).code())
                         .isEqualTo(200);
