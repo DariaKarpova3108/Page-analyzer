@@ -208,12 +208,12 @@ public class AppTest {
                         .isEqualTo(200);
 
                 List<UrlCheck> actualCheck = CheckRepository.getListCheck(actualUrl.getId());
-                var check = actualCheck.getLast();
+
                 assertThat(actualCheck).isNotNull();
-                assertThat(check.getTitle()).isEqualTo("Test page");
-                assertThat(check.getH1())
+                assertThat(actualCheck.get(actualCheck.size() - 1).getTitle()).isEqualTo("Test page");
+                assertThat(actualCheck.get(actualCheck.size() - 1).getH1())
                         .isEqualTo("Do not expect a miracle, miracles yourself!");
-                assertThat(check.getDescription()).isEqualTo("statements of great people");
+                assertThat(actualCheck.get(actualCheck.size() - 1).getDescription()).isEqualTo("statements of great people");
             });
         }
     }
