@@ -213,7 +213,8 @@ public class AppTest {
                 assertThat(actualCheck.get(actualCheck.size() - 1).getTitle()).isEqualTo("Test page");
                 assertThat(actualCheck.get(actualCheck.size() - 1).getH1())
                         .isEqualTo("Do not expect a miracle, miracles yourself!");
-                assertThat(actualCheck.get(actualCheck.size() - 1).getDescription()).isEqualTo("statements of great people");
+                assertThat(actualCheck.get(actualCheck.size() - 1).getDescription())
+                        .isEqualTo("statements of great people");
             });
         }
     }
