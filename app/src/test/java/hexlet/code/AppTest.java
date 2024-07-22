@@ -9,13 +9,17 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.Response;
+import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -26,6 +30,10 @@ public class AppTest {
     private static Javalin app;
     private static MockWebServer mockWebServer;
 
+    private static String readFixture(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("src/test/java/resources/", filename)));
+    }
+
     @BeforeEach
     public final void setUp() throws IOException {
         app = App.getApp();
@@ -34,6 +42,9 @@ public class AppTest {
     @BeforeAll
     public static void createMockServer() throws IOException {
         mockWebServer = new MockWebServer();
+        MockResponse mockedResponse = new MockResponse()
+                .setBody(readFixture("index.html"));
+        mockWebServer.enqueue(mockedResponse);
         mockWebServer.start();
     }
 
@@ -174,5 +185,34 @@ public class AppTest {
             assertNotNull(checkList);
             assertThat(response.code()).isEqualTo(200);
         }));
+    }
+
+    @Nested
+    class UrlCheckTest {
+        @Test
+        void testStore() {
+            String url = mockWebServer.url("/").toString().replaceAll("/$", "");
+
+            JavalinTest.test(app, (server, client) -> {
+                var requestBody = "url=" + url;
+                assertThat(client.post("/urls", requestBody).code()).isEqualTo(200);
+
+                var actualUrl = UrlRepository.findByName(url);
+                assertThat(actualUrl).isNotNull();
+                assertThat(actualUrl.get().getName()).isEqualTo(url);
+
+                client.post("/urls/" + actualUrl.get().getId() + "/check");
+
+                assertThat(client.get("/urls/" + actualUrl.get().getId()).code())
+                        .isEqualTo(200);
+
+                var actualCheck = CheckRepository.getListCheck(actualUrl.get().getId());
+                assertThat(actualCheck).isNotNull();
+                assertThat(actualCheck.getLast().getTitle()).isEqualTo("Test page");
+                assertThat(actualCheck.getLast().getH1())
+                        .isEqualTo("Do not expect a miracle, miracles yourself!");
+                assertThat(actualCheck.getLast().getDescription()).isEqualTo("statements of great people");
+            });
+        }
     }
 }
